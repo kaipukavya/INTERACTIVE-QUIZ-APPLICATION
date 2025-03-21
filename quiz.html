@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFA500;
+            background-image: url('https://th.bing.com/th/id/OIP.CgeIEcW4flAKOKlkCHCGKwHaFj?pid=ImgDet&w=184&h=138&c=7&dpr=1.3');
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 1000px;
+            height: 500px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-image: url('https://th.bing.com/th/id/OIP.ASrsA_n6cZAbWyLiOmxAbAHaEo?w=257&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .question {
+            font-size: 30px;
+            color: red;
+        }
+        .options {
+            margin-top: 40px;
+            color: blue;
+            font-size: 20px;
+        }
+        .option {
+            margin: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 3px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .option:hover {
+            background-color: #ddd;
+        }
+        .feedback {
+            margin-top: 30px;
+            font-size: 24px;
+            color: green;
+        }
+        .score {
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-top: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Interactive Quiz</h1>
+        <div id="question" class="question"></div>
+        <div id="options" class="options"></div>
+        <div id="feedback" class="feedback hidden"></div>
+        <div id="score" class="score hidden"></div>
+        <button id="next-btn" class="hidden">Next Question</button>
+    </div>
+
+    <script>
+        const quizQuestions = [
+            {
+                question: "What does HTML stand for?",
+                options: ["High Text Markup Language", "HyperText Markup Language", "HyperText Mark Language", "High Text Mark Language"],
+                correctAnswer: 1,
+            },
+            {
+                question: "Which HTML tag is used to create a hyperlink?",
+                options: ["<link>", "<a>", "<href>", "<button>"],
+                correctAnswer: 1,
+            },
+            {
+                question: "Which HTML tag is used to insert an image?",
+                options: ["<img>", "<image>", "<picture>", "<href>"],
+                correctAnswer: 0,
+            },
+            {
+                question: "Which HTML tag is used to define an ordered list?",
+                options: ["<ul>", "<ol>", "<list>", "<li>"],
+                correctAnswer: 1,
+            },
+            {
+                question: "Which HTML tag is used to define an unordered list?",
+                options: ["<ol>", "<li>", "<ul>", "<list>"],
+                correctAnswer: 2,
+            },
+            {
+                question: "Which HTML tag is used to define a paragraph?",
+                options: ["<p>", "<paragraph>", "<parg>", "<line>"],
+                correctAnswer: 0,
+            },
+            {
+                question: "Which HTML tag is used to define a heading?",
+                options: ["<head>", "<h1>", "<title>", "<heading>"],
+                correctAnswer: 1,
+            },
+            {
+                question: "Which HTML tag is used to create a line break?",
+                options: ["<break>", "<line>", "<lb>", "<br>"],
+                correctAnswer: 3,
+            },
+            {
+                question: "Which HTML tag is used to define a horizontal rule?",
+                options: ["<hr>", "<br>", "<li>", "<link>"],
+                correctAnswer: 0,
+            },
+            {
+                question: "Which HTML tag is used to define the title of a document?",
+                options: ["<head>", "<title>", "<h1>", "<p>"],
+                correctAnswer: 1,
+            },
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = quizQuestions.length;
+
+        function loadQuestion() {
+            const questionObj = quizQuestions[currentQuestionIndex];
+            const questionElement = document.getElementById('question');
+            const optionsElement = document.getElementById('options');
+            const feedbackElement = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+
+            feedbackElement.classList.add('hidden');
+            nextBtn.classList.add('hidden');
+
+            questionElement.textContent = questionObj.question;
+
+            optionsElement.innerHTML = '';
+
+            questionObj.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.textContent = option;
+                optionElement.classList.add('option');
+                optionElement.setAttribute('data-index', index);
+                optionsElement.appendChild(optionElement);
+            });
+
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => {
+                option.addEventListener('click', () => {
+                    const selectedOptionIndex = parseInt(option.getAttribute('data-index'));
+                    const correctAnswerIndex = questionObj.correctAnswer;
+
+                    if (selectedOptionIndex === correctAnswerIndex) {
+                        feedbackElement.textContent = "Correct!";
+                        score++;
+                    } else {
+                        feedbackElement.textContent = `Wrong! The correct answer was: ${questionObj.options[correctAnswerIndex]}`;
+                    }
+
+                    feedbackElement.classList.remove('hidden');
+                    nextBtn.classList.remove('hidden');
+                });
+            });
+        }
+
+        function showFinalScore() {
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `Your final score is: ${score} out of ${totalQuestions}`;
+            scoreElement.classList.remove('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('options').classList.add('hidden');
+            document.getElementById('question').classList.add('hidden');
+        }
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestions) {
+                loadQuestion();
+            } else {
+                showFinalScore();
+            }
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
